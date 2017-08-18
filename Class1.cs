@@ -46,13 +46,21 @@ namespace NehouseLibrary
         /// <returns></returns>
         public string getRequest(string url)
         {
-            var request = new HttpRequest();
-            request.UserAgent = HttpHelper.RandomChromeUserAgent();
-            request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
-            // Отправляем запрос.
-            HttpResponse response = request.Get(url);
-            // Принимаем тело сообщения в виде строки.
-            otv = response.ToText();
+            try
+            {
+                var request = new HttpRequest();
+                request.UserAgent = HttpHelper.RandomChromeUserAgent();
+                request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
+                // Отправляем запрос.
+                HttpResponse response = request.Get(url);
+                // Принимаем тело сообщения в виде строки.
+                otv = response.ToText();
+            }
+            catch
+            {
+                otv = "err";
+            }
+            
             return otv;
         }
 
@@ -64,12 +72,20 @@ namespace NehouseLibrary
         /// <returns></returns>
         public string getRequest(CookieDictionary cookie, string url)
         {
-            var request = new HttpRequest();
-            request.UserAgent = HttpHelper.RandomChromeUserAgent();
-            request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
-            request.Cookies = cookie;
-            HttpResponse response = request.Get(url);
-            otv = response.ToText();
+            try
+            {
+                var request = new HttpRequest();
+                request.UserAgent = HttpHelper.RandomChromeUserAgent();
+                request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
+                request.Cookies = cookie;
+                HttpResponse response = request.Get(url);
+                otv = response.ToText();
+            }
+            catch
+            {
+                otv = "err";
+            }
+            
             return otv;
         }
 
@@ -96,14 +112,22 @@ namespace NehouseLibrary
 
         public string PostRequest(CookieDictionary cookie, string url)
         {
-            var request = new HttpRequest();
-            request.UserAgent = HttpHelper.RandomChromeUserAgent();
-            request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
-            request.Cookies = cookie;
-            HttpResponse response = request.Post(url, "");
-            otv = response.ToText();
-            return otv;
             
+            try
+            {
+                var request = new HttpRequest();
+                request.UserAgent = HttpHelper.RandomChromeUserAgent();
+                request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
+                request.Cookies = cookie;
+                HttpResponse response = request.Post(url, "");
+                otv = response.ToText();
+            }
+            catch
+            {
+                otv = "err";
+            }
+            return otv;
+
             //otv = "";
             //HttpWebResponse res = null;
             //HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create(url);
@@ -189,18 +213,19 @@ namespace NehouseLibrary
             otv = "";
             requestStr = requestStr.Replace("false", "0").Replace("true", "1").Replace("+", "%2B");
 
-
-            var request = new HttpRequest();
-            request.UserAgent = HttpHelper.RandomChromeUserAgent();
-            request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
-            request.Cookies = cookie;
-            HttpResponse response = request.Post(url, requestStr);
-            otv = response.ToText();
-            
-
-
-
-
+            try
+            {
+                var request = new HttpRequest();
+                request.UserAgent = HttpHelper.RandomChromeUserAgent();
+                request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
+                request.Cookies = cookie;
+                HttpResponse response = request.Post(url, requestStr);
+                otv = response.ToText();
+            }
+            catch
+            {
+                otv = "err";
+            }
 
             //HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
             //req.Accept = "application/json, text/plain, */*";
@@ -208,7 +233,7 @@ namespace NehouseLibrary
             //req.Method = "POST";
             //req.ContentType = "application/x-www-form-urlencoded";
             //req.CookieContainer = cookie;
-            
+
 
             //byte[] ms = Encoding.GetEncoding("utf-8").GetBytes(requestStr);
             //req.ContentLength = ms.Length;
@@ -393,8 +418,6 @@ namespace NehouseLibrary
 
         private string ChekedLoading(CookieDictionary cookie)
         {
-
-
             var request = new HttpRequest();
             request.UserAgent = HttpHelper.RandomChromeUserAgent();
             request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
@@ -481,7 +504,7 @@ namespace NehouseLibrary
             byte[] base_byte = ms1.Concat(pic).ToArray();
             base_byte = base_byte.Concat(end).ToArray();
 
-            
+
             var request = new HttpRequest();
             request.UserAgent = HttpHelper.RandomChromeUserAgent();
             request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
@@ -972,7 +995,7 @@ namespace NehouseLibrary
             //req.Method = "POST";
             //req.ContentType = "application/x-www-form-urlencoded";
             //req.CookieContainer = cookie;
-            
+
             //req.ContentLength = ms.Length;
             //Stream stre = req.GetRequestStream();
             //stre.Write(ms, 0, ms.Length);
@@ -991,7 +1014,6 @@ namespace NehouseLibrary
             List<string> getProduct = GetProductList(cookie, url);
             byte[] ms = System.Text.Encoding.GetEncoding("utf-8").GetBytes("id=" + getProduct[0] + "&slug=" + getProduct[1] + "&categoryId=" + getProduct[2] + "&productGroup=" + getProduct[3] + "&name=" + getProduct[4] + "&serial=" + getProduct[5] + "&serialByUser=" + getProduct[6] + "&desc=" + getProduct[7] + "&descFull=" + getProduct[8] + "&cost=" + getProduct[9] + "&discountCost=" + getProduct[10] + "&seoMetaDesc=" + getProduct[11] + "&seoMetaKeywords=" + getProduct[12] + "&seoTitle=" + getProduct[13] + "&haveDetail=" + getProduct[14] + "&canMakeOrder=" + getProduct[15] + "&balance=100&showOnMain=" + getProduct[16] + "&isVisible=1&hasSale=0&avatar[id]=" + getProduct[17] + "&avatar[objectId]=" + getProduct[18] + "&avatar[timestamp]=" + getProduct[19] + "&avatar[type]=" + getProduct[20] + "&avatar[name]=" + getProduct[21] + "&avatar[desc]=" + getProduct[22] + "&avatar[ext]=" + getProduct[23] + "&avatar[formats][raw]=" + getProduct[24] + "&avatar[formats][W215]=" + getProduct[25] + "&avatar[formats][150x120]=" + getProduct[26] + "&avatar[formats][104x82]=" + getProduct[27] + "&avatar[formatParams][raw][fileSize]=" + getProduct[28] + "&avatar[alt]=" + getProduct[29] + "&avatar[isVisibleOnMain]=" + getProduct[30] + "&avatar[priority]=" + getProduct[31] + "&avatar[url]=" + getProduct[32] + "&avatar[filters][crop][left]=" + getProduct[33] + "&avatar[filters][crop][top]=" + getProduct[34] + "&avatar[filters][crop][right]=" + getProduct[35] + "&avatar[filters][crop][bottom]=" + getProduct[36] + "&customDays=" + getProduct[37] + "&isCustom=" + getProduct[38]);
 
-
             var request = new HttpRequest();
             request.UserAgent = HttpHelper.RandomChromeUserAgent();
             request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
@@ -1006,7 +1028,7 @@ namespace NehouseLibrary
             //req.Method = "POST";
             //req.ContentType = "application/x-www-form-urlencoded";
             //req.CookieContainer = cookie;
-            
+
             //req.ContentLength = ms.Length;
             //Stream stre = req.GetRequestStream();
             //stre.Write(ms, 0, ms.Length);
