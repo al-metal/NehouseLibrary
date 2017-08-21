@@ -253,7 +253,7 @@ namespace NehouseLibrary
 
         #region Загрузка CSV файла на сайт
 
-        public void UploadCSVNethouse(CookieDictionary cookie, string nameFile)
+        public void UploadCSVNethouse(CookieDictionary cookie, string nameFile, string login, string password)
         {
             string trueOtv = null;
             do
@@ -263,7 +263,7 @@ namespace NehouseLibrary
                 do
                 {
                     System.Threading.Thread.Sleep(2000);
-                    otvimg = ChekedLoading(cookie);
+                    otvimg = ChekedLoading(cookie, login, password);
                 }
                 while (otvimg == check);
 
@@ -416,9 +416,9 @@ namespace NehouseLibrary
             return addCount;
         }
 
-        private string ChekedLoading(CookieDictionary cookie)
+        private string ChekedLoading(CookieDictionary cookie, string login, string password)
         {
-            var request = new HttpRequest();
+            /*var request = new HttpRequest();
             request.UserAgent = HttpHelper.RandomChromeUserAgent();
             request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
             request.Cookies = cookie;
@@ -427,22 +427,37 @@ namespace NehouseLibrary
             HttpResponse response = request.Post("https://bike18.nethouse.ru/api/export-import/check-import", "");
             otv = response.ToText();
 
-            return otv;
+            return otv;*/
+
+            CookieContainer cookie2 = new CookieContainer();
+            HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create("https://nethouse.ru/signin");
+            req.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
+            req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:44.0) Gecko/20100101 Firefox/44.0";
+            req.Method = "POST";
+            req.ContentType = "application/x-www-form-urlencoded";
+            req.CookieContainer = cookie2;
+            byte[] ms = Encoding.ASCII.GetBytes("login=" + login + "&password=" + password + "&quick_expire=0&submit=%D0%92%D0%BE%D0%B9%D1%82%D0%B8");
+            req.ContentLength = ms.Length;
+            Stream stre = req.GetRequestStream();
+            stre.Write(ms, 0, ms.Length);
+            stre.Close();
+            HttpWebResponse res = (HttpWebResponse)req.GetResponse();
+            res.Close();
 
 
-            //HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create("https://bike18.nethouse.ru/api/export-import/check-import");
-            //req.Accept = "application/json, text/plain, */*";
-            //req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:44.0) Gecko/20100101 Firefox/44.0";
-            //req.Method = "POST";
-            //req.ContentLength = 0;
-            //req.ContentType = "application/x-www-form-urlencoded";
-            //req.CookieContainer = cookie;
-            //Stream stre1 = req.GetRequestStream();
-            //stre1.Close();
-            //HttpWebResponse resimg = (HttpWebResponse)req.GetResponse();
-            //StreamReader ressrImg = new StreamReader(resimg.GetResponseStream());
-            //string otvimg = ressrImg.ReadToEnd();
-            //return otvimg;
+            req = (HttpWebRequest)HttpWebRequest.Create("https://bike18.nethouse.ru/api/export-import/check-import");
+            req.Accept = "application/json, text/plain, */*";
+            req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:44.0) Gecko/20100101 Firefox/44.0";
+            req.Method = "POST";
+            req.ContentLength = 0;
+            req.ContentType = "application/x-www-form-urlencoded";
+            req.CookieContainer = cookie2;
+            Stream stre1 = req.GetRequestStream();
+            stre1.Close();
+            HttpWebResponse resimg = (HttpWebResponse)req.GetResponse();
+            StreamReader ressrImg = new StreamReader(resimg.GetResponseStream());
+            string otvimg = ressrImg.ReadToEnd();
+            return otvimg;
         }
 
         #endregion
