@@ -1102,11 +1102,7 @@ namespace NehouseLibrary
             }
             string prodName = new Regex("(?<=<h1>).*(?=</h1>)").Match(otv).Value;
             prodName = ReplaceAmpersandsChar(prodName);
-            string price = new Regex("(?<=<span class=\"product-price-data\" data-cost=\").*?(?=\">)").Match(otv).Value;
-            if (price == "")
-            {
-                price = "0";
-            }
+            
             string imgId = new Regex("(?<=<div id=\"avatar-).*(?=\")").Match(otv).Value;
             string desc = new Regex("(?<=<div class=\"product__desc show-for-large user-inner\">)[\\w\\W]*?(?=</div>)").Match(otv).Value;
             desc = ReplaceAmpersandsChar(desc);
@@ -1125,6 +1121,14 @@ namespace NehouseLibrary
             string parametrsTovar = "";
 
             otv = getRequest(cookie, "https://bike18.nethouse.ru/api/catalog/getproduct?id=" + productId);
+
+            string coast = new Regex("(?<=\"cost\":\").*?(?=\")").Match(otv).Value;
+            if (coast == "")
+            {
+                coast = "0";
+            }
+            string discountCoast = new Regex("(?<=\"discountCost\":\").*?(?=\")").Match(otv).Value;
+
             string slug = new Regex("(?<=\",\"slug\":\").*?(?=\")").Match(otv).ToString();
             string reklama = "";
             string markers = new Regex("(?<=markers\":{\").*?(?=\")").Match(otv).ToString();
@@ -1153,7 +1157,6 @@ namespace NehouseLibrary
             if (balance.Contains("\""))
                 balance = balance.Replace("\"", "");
             string productCastomGroup = new Regex("(?<=productCustomGroup\":).*?(?=,\")").Match(otv).ToString();
-            string discountCoast = new Regex("(?<=discountCost\":\").*?(?=\",\")").Match(otv).Value;
             string serial = new Regex("(?<=serial\":\").*?(?=\")").Match(otv).Value;
             string categoryId = new Regex("(?<=\",\"categoryId\":\").*?(?=\")").Match(otv).Value;
             if (categoryId == "")
