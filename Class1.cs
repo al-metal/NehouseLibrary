@@ -970,6 +970,12 @@ namespace NehouseLibrary
             ampersands.Add("&thorn;", "þ");
             ampersands.Add("&#255;", "ÿ");
             ampersands.Add("&yuml;", "ÿ");
+
+            ampersands.Add("&hyphen;", "‐");
+            ampersands.Add("&dash;", "‐");
+            ampersands.Add("&ndash;", "–");
+            ampersands.Add("&mdash;", "—");
+            ampersands.Add("&horbar;", "―");
         }
 
         /// <summary>
@@ -1070,10 +1076,29 @@ namespace NehouseLibrary
             string productId = new Regex("(?<=data-product-id=\").*?(?=\">)").Match(otv).ToString();
             if (productId == "")
                 productId = new Regex("(?<=data-id=\").*?(?=\")").Match(otv).ToString();
-            string article = new Regex("(?<=Артикул:)[\\w\\W]*?(?=</div>)").Match(otv).Value.Trim();
-            if (article.Length > 128)
+            string article = "";
+            MatchCollection articlArray = new Regex("(?<=Артикул:)[\\w\\W]*?(?=</div>)").Matches(otv);
+            for (int i = 0; articlArray.Count > i; i++)
             {
-                article = new Regex("(?<=Артикул:)[\\w\\W]*(?=</title>)").Match(otv).ToString().Trim();
+                string str = articlArray[i].ToString().Trim();
+                if (str.Length > 128)
+                {
+                    article = new Regex("(?<=Артикул:)[\\w\\W]*(?=</title>)").Match(otv).ToString().Trim();
+                    if (article.Length > 128)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+                    article = str;
+                    break;
+                }
+
             }
             string prodName = new Regex("(?<=<h1>).*(?=</h1>)").Match(otv).Value;
             prodName = ReplaceAmpersandsChar(prodName);
@@ -1481,6 +1506,23 @@ namespace NehouseLibrary
         {
             string discount = "<p style=\"text-align: right;\"><span style=\"font-weight: bold; font-weight: bold;\"> 1. <a href=\"https://bike18.ru/oplata-dostavka\">Выгодные условия доставки по всей России!</a></span></p><p style=\"text-align: right;\"><span style=\"font-weight: bold; font-weight: bold;\"> 2. <a href=\"https://bike18.ru/stock\">Нашли дешевле!? 110% разницы Ваши!</a></span></p><p style=\"text-align: right;\"><span style=\"font-weight: bold; font-weight: bold;\"> 3. <a href=\"https://bike18.ru/service\">Также обращайтесь в наш сервис центр в Ижевске!</a></span></p>";
             return discount;
+        }
+
+        public string Remove(string text, int v)
+        {
+            if (text.Length > v)
+            {
+                text = text.Remove(v);
+                try
+                {
+                    text = text.Remove(text.LastIndexOf(" "));
+                }
+                catch
+                {
+
+                }
+            }
+            return text;
         }
 
     }
