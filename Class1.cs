@@ -1130,6 +1130,21 @@ namespace NehouseLibrary
             string discountCoast = new Regex("(?<=\"discountCost\":\").*?(?=\")").Match(otv).Value;
 
             string slug = new Regex("(?<=\",\"slug\":\").*?(?=\")").Match(otv).ToString();
+
+            string customGroup = new Regex("(?<=productCustomGroup\":)[\\w\\W]*?(?=,\")").Match(otv).ToString();
+            dynamic stuff1 = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(otv);
+            string ssss = stuff1.ToString();
+            string groupeBranch = new Regex("(?<=productGroupBranch\":)[\\w\\W]*(?=\"name\":)").Match(ssss).ToString();
+            MatchCollection groupes = new Regex("(?<=name\": \")[\\w\\W]*?(?=\")").Matches(groupeBranch);
+            string strGroupe = "";
+            foreach (Match s in groupes)
+            {
+                strGroupe += s + "/";
+            }
+
+            if (strGroupe != "")
+                strGroupe = strGroupe.Substring(0, strGroupe.Length - 1);
+
             string reklama = "";
             string markers = new Regex("(?<=markers\":{\").*?(?=\")").Match(otv).ToString();
             if (markers == "1")
@@ -1239,7 +1254,7 @@ namespace NehouseLibrary
             listTovar.Add(article);         //6
             listTovar.Add(desc);            //7
             listTovar.Add(fulldesc);        //8
-            listTovar.Add(price);           //9
+            listTovar.Add(coast);           //9
             listTovar.Add(discountCoast);   //10
             listTovar.Add(seometa);         //11
             listTovar.Add(keywords);        //12
@@ -1275,6 +1290,8 @@ namespace NehouseLibrary
             listTovar.Add(alsoBuyStr);      //42
             listTovar.Add(balance);         //43
             listTovar.Add(parametrsTovar);  //44
+            listTovar.Add(strGroupe);       //45
+            listTovar.Add(customGroup);     //46
 
             return listTovar;
         }
