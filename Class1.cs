@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -15,6 +16,8 @@ namespace NehouseLibrary
     {
         string otv;
         int addCount = 0;
+
+        IPStatus status;
         Dictionary<string, string> ampersands = new Dictionary<string, string>();
 
         #region WEB - запросы
@@ -46,6 +49,7 @@ namespace NehouseLibrary
         /// <returns></returns>
         public string getRequest(string url)
         {
+            Internet();
             try
             {
                 var request = new HttpRequest();
@@ -72,6 +76,7 @@ namespace NehouseLibrary
         /// <returns></returns>
         public string getRequest(CookieDictionary cookie, string url)
         {
+            Internet();
             try
             {
                 var request = new HttpRequest();
@@ -112,7 +117,7 @@ namespace NehouseLibrary
 
         public string PostRequest(CookieDictionary cookie, string url)
         {
-            
+            Internet();
             try
             {
                 var request = new HttpRequest();
@@ -150,6 +155,7 @@ namespace NehouseLibrary
         /// <returns></returns>
         public CookieDictionary webCookie(string url)
         {
+            Internet();
             CookieDictionary cookie = new CookieDictionary();
             var request = new HttpRequest();
             request.UserAgent = HttpHelper.RandomChromeUserAgent();
@@ -180,6 +186,7 @@ namespace NehouseLibrary
         /// <returns></returns>
         public CookieDictionary CookieNethouse(string login, string password)
         {
+            Internet();
             string url = "https://nethouse.ru/signin";
             CookieDictionary cookie = new CookieDictionary();
             var request = new HttpRequest();
@@ -212,7 +219,7 @@ namespace NehouseLibrary
         {
             otv = "";
             requestStr = requestStr.Replace("false", "0").Replace("true", "1").Replace("+", "%2B");
-
+            Internet();
             try
             {
                 var request = new HttpRequest();
@@ -258,6 +265,7 @@ namespace NehouseLibrary
             string trueOtv = null;
             do
             {
+                Internet();
                 string otvimg = DownloadNaSite(cookie, nameFile);
                 string check = "{\"success\":true,\"imports\":{\"state\":1,\"errorCode\":0,\"errorLine\":0}}";
                 do
@@ -296,7 +304,7 @@ namespace NehouseLibrary
             byte[] base_byte = ms1.Concat(csv).ToArray();
             base_byte = base_byte.Concat(end).ToArray();
 
-
+            Internet();
 
             var request = new HttpRequest();
             request.UserAgent = HttpHelper.RandomChromeUserAgent();
@@ -428,6 +436,7 @@ namespace NehouseLibrary
             otv = response.ToText();
 
             return otv;*/
+            Internet();
 
             CookieContainer cookie2 = new CookieContainer();
             HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create("https://nethouse.ru/signin");
@@ -472,7 +481,7 @@ namespace NehouseLibrary
             {
                 urlProduct = urlProduct.Replace(".ru", ".nethouse.ru");
             }
-
+            Internet();
             otv = PostRequest(cookieBike18, urlProduct);
             String article = new Regex("(?<=Артикул:)[\\w\\W]*?(?=</div>)").Match(otv).Value.Trim();
             if (article.Length > 128 || article.Contains(" "))
@@ -519,7 +528,7 @@ namespace NehouseLibrary
             byte[] base_byte = ms1.Concat(pic).ToArray();
             base_byte = base_byte.Concat(end).ToArray();
 
-
+            Internet();
             var request = new HttpRequest();
             request.UserAgent = HttpHelper.RandomChromeUserAgent();
             request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
@@ -559,7 +568,7 @@ namespace NehouseLibrary
 
 
 
-
+            Internet();
             request = new HttpRequest();
             request.UserAgent = HttpHelper.RandomChromeUserAgent();
             request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
@@ -603,7 +612,7 @@ namespace NehouseLibrary
             byte[] base_byte = ms1.Concat(pic).ToArray();
             base_byte = base_byte.Concat(end).ToArray();
 
-
+            Internet();
             var request = new HttpRequest();
             request.UserAgent = HttpHelper.RandomChromeUserAgent();
             request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
@@ -641,7 +650,7 @@ namespace NehouseLibrary
         public string SaveImages(CookieDictionary cookie, string urlSaveImg, int prodId, double widthImg, double heigthImg)
         {
             byte[] saveImg = Encoding.ASCII.GetBytes("url=" + urlSaveImg + "&id=0&type=4&objectId=" + prodId + "&imgCrop[x]=0&imgCrop[y]=0&imgCrop[width]=" + widthImg + "&imgCrop[height]=" + heigthImg + "&imageId=0&iObjectId=" + prodId + "&iImageType=4&replacePhoto=0");
-
+            Internet();
             var request = new HttpRequest();
             request.UserAgent = HttpHelper.RandomChromeUserAgent();
             request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
@@ -1002,6 +1011,8 @@ namespace NehouseLibrary
         {
             byte[] ms = System.Text.Encoding.GetEncoding("utf-8").GetBytes("id=" + getProduct[0] + "&slug=" + getProduct[1] + "&categoryId=" + getProduct[2] + "&productGroup=" + getProduct[3] + "&name=" + getProduct[4] + "&serial=" + getProduct[5] + "&serialByUser=" + getProduct[6] + "&desc=" + getProduct[7] + "&descFull=" + getProduct[8] + "&cost=" + getProduct[9] + "&discountCost=" + getProduct[10] + "&seoMetaDesc=" + getProduct[11] + "&seoMetaKeywords=" + getProduct[12] + "&seoTitle=" + getProduct[13] + "&haveDetail=" + getProduct[14] + "&canMakeOrder=" + getProduct[15] + "&balance=100&showOnMain=" + getProduct[16] + "&isVisible=1&hasSale=0&avatar[id]=" + getProduct[17] + "&avatar[objectId]=" + getProduct[18] + "&avatar[timestamp]=" + getProduct[19] + "&avatar[type]=" + getProduct[20] + "&avatar[name]=" + getProduct[21] + "&avatar[desc]=" + getProduct[22] + "&avatar[ext]=" + getProduct[23] + "&avatar[formats][raw]=" + getProduct[24] + "&avatar[formats][W215]=" + getProduct[25] + "&avatar[formats][150x120]=" + getProduct[26] + "&avatar[formats][104x82]=" + getProduct[27] + "&avatar[formatParams][raw][fileSize]=" + getProduct[28] + "&avatar[alt]=" + getProduct[29] + "&avatar[isVisibleOnMain]=" + getProduct[30] + "&avatar[priority]=" + getProduct[31] + "&avatar[url]=" + getProduct[32] + "&avatar[filters][crop][left]=" + getProduct[33] + "&avatar[filters][crop][top]=" + getProduct[34] + "&avatar[filters][crop][right]=" + getProduct[35] + "&avatar[filters][crop][bottom]=" + getProduct[36] + "&customDays=" + getProduct[37] + "&isCustom=" + getProduct[38]);
 
+            Internet();
+
             var request = new HttpRequest();
             request.UserAgent = HttpHelper.RandomChromeUserAgent();
             request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
@@ -1035,6 +1046,8 @@ namespace NehouseLibrary
             List<string> getProduct = GetProductList(cookie, url);
             byte[] ms = System.Text.Encoding.GetEncoding("utf-8").GetBytes("id=" + getProduct[0] + "&slug=" + getProduct[1] + "&categoryId=" + getProduct[2] + "&productGroup=" + getProduct[3] + "&name=" + getProduct[4] + "&serial=" + getProduct[5] + "&serialByUser=" + getProduct[6] + "&desc=" + getProduct[7] + "&descFull=" + getProduct[8] + "&cost=" + getProduct[9] + "&discountCost=" + getProduct[10] + "&seoMetaDesc=" + getProduct[11] + "&seoMetaKeywords=" + getProduct[12] + "&seoTitle=" + getProduct[13] + "&haveDetail=" + getProduct[14] + "&canMakeOrder=" + getProduct[15] + "&balance=100&showOnMain=" + getProduct[16] + "&isVisible=1&hasSale=0&avatar[id]=" + getProduct[17] + "&avatar[objectId]=" + getProduct[18] + "&avatar[timestamp]=" + getProduct[19] + "&avatar[type]=" + getProduct[20] + "&avatar[name]=" + getProduct[21] + "&avatar[desc]=" + getProduct[22] + "&avatar[ext]=" + getProduct[23] + "&avatar[formats][raw]=" + getProduct[24] + "&avatar[formats][W215]=" + getProduct[25] + "&avatar[formats][150x120]=" + getProduct[26] + "&avatar[formats][104x82]=" + getProduct[27] + "&avatar[formatParams][raw][fileSize]=" + getProduct[28] + "&avatar[alt]=" + getProduct[29] + "&avatar[isVisibleOnMain]=" + getProduct[30] + "&avatar[priority]=" + getProduct[31] + "&avatar[url]=" + getProduct[32] + "&avatar[filters][crop][left]=" + getProduct[33] + "&avatar[filters][crop][top]=" + getProduct[34] + "&avatar[filters][crop][right]=" + getProduct[35] + "&avatar[filters][crop][bottom]=" + getProduct[36] + "&customDays=" + getProduct[37] + "&isCustom=" + getProduct[38]);
 
+            Internet();
+
             var request = new HttpRequest();
             request.UserAgent = HttpHelper.RandomChromeUserAgent();
             request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
@@ -1067,6 +1080,9 @@ namespace NehouseLibrary
                 urlTovar = urlTovar.Replace(".ru/", ".nethouse.ru/");
 
             List<string> listTovar = new List<string>();
+
+            Internet();
+
             otv = getRequest(cookie, urlTovar);
             if (otv == "")
             {
@@ -1119,6 +1135,8 @@ namespace NehouseLibrary
 
             MatchCollection paramsTovar = new Regex("(?<=<label class=\"ptype-view-title infoDigits\">)[\\w\\W]*?(?=</select></li>)").Matches(otv);
             string parametrsTovar = "";
+
+            Internet();
 
             otv = getRequest(cookie, "https://bike18.nethouse.ru/api/catalog/getproduct?id=" + productId);
 
@@ -1222,6 +1240,8 @@ namespace NehouseLibrary
                     alsoBuyStr += "&alsoBuy[" + i + "]=" + alsoBuyArray[i].ToString();
                 }
             }
+
+            Internet();
 
             otv = getRequest(cookie, "https://bike18.nethouse.ru/api/catalog/productmedia?id=" + productId);
             string avatarId = new Regex("(?<=\"id\":\").*?(?=\")").Match(otv).Value;
@@ -1341,7 +1361,7 @@ namespace NehouseLibrary
 
 
 
-
+            Internet();
 
             var request = new HttpRequest();
             request.UserAgent = HttpHelper.RandomChromeUserAgent();
@@ -1428,6 +1448,9 @@ namespace NehouseLibrary
         public string alsoBuyTovars(List<string> tovarList)
         {
             string name = tovarList[4].ToString();
+
+            Internet();
+
             string otv = getRequest("https://bike18.ru/products/search?sort=0&balance=&categoryId=&min_cost=&max_cost=&page=1&text=" + name);
             MatchCollection searchTovars = new Regex("(?<=id=\"item).*?(?=\">)").Matches(otv);
             string alsoBuy = "";
@@ -1447,8 +1470,12 @@ namespace NehouseLibrary
             }
             else
             {
+                Internet();
+
                 otv = getRequest("https://bike18.ru/products/category/" + tovarList[2].ToString());
                 string nameCategory = new Regex("(?<=<h1 class=\"category-name\">).*(?=</h1>)").Match(otv).ToString();
+
+                Internet();
 
                 otv = getRequest("https://bike18.ru/products/search/page/1?sort=0&balance=&categoryId=&min_cost=&max_cost=&text=" + nameCategory);
                 searchTovars = new Regex("(?<=id=\"item).*?(?=\">)").Matches(otv);
@@ -1479,6 +1506,8 @@ namespace NehouseLibrary
         public string Redirect(CookieDictionary cookie, string oldCHPU, string newCHPU)
         {
             byte[] saveImg = Encoding.ASCII.GetBytes("fromlink=/products/" + oldCHPU + "&tolink=/products/" + newCHPU);
+
+            Internet();
 
             var request = new HttpRequest();
             request.UserAgent = HttpHelper.RandomChromeUserAgent();
@@ -1513,6 +1542,8 @@ namespace NehouseLibrary
             string otv = null;
             string urlTovarBike = null;
 
+            Internet();
+
             otv = getRequest("https://bike18.ru/products/search/page/1?sort=0&balance=&categoryId=&min_cost=&max_cost=&text=" + searchString);
             urlTovarBike = new Regex("(?<=<div class=\"product-item__link\"><a href=\").*?(?=\">)").Match(otv).ToString();
 
@@ -1545,5 +1576,27 @@ namespace NehouseLibrary
             return text;
         }
 
+        private void Internet()
+        {
+            bool internet = false;
+            do
+            {
+                try
+                {
+                    Ping p = new Ping();
+                    PingReply pr = p.Send(@"ya.ru");
+                    status = pr.Status;
+                }
+                catch { status = IPStatus.Unknown; }
+                if (status == IPStatus.Success)
+                {
+                    internet = true;
+                }
+                else
+                {
+                    System.Threading.Thread.Sleep(60000);
+                }
+            } while (!internet);
+        }
     }
 }
