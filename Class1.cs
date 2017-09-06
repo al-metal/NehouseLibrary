@@ -1085,7 +1085,7 @@ namespace NehouseLibrary
             Internet();
 
             otv = getRequest(cookie, urlTovar);
-            if (otv == "")
+            if (otv == "err")
             {
                 return listTovar = null;
             }
