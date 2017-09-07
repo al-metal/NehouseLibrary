@@ -1140,6 +1140,10 @@ namespace NehouseLibrary
             Internet();
 
             otv = getRequest(cookie, "https://bike18.nethouse.ru/api/catalog/getproduct?id=" + productId);
+            if (otv == "err")
+            {
+                return listTovar = null;
+            }
 
             string coast = new Regex("(?<=\"cost\":\").*?(?=\")").Match(otv).Value;
             if (coast == "")
@@ -1245,6 +1249,12 @@ namespace NehouseLibrary
             Internet();
 
             otv = getRequest(cookie, "https://bike18.nethouse.ru/api/catalog/productmedia?id=" + productId);
+
+            if (otv == "err")
+            {
+                return listTovar = null;
+            }
+
             string avatarId = new Regex("(?<=\"id\":\").*?(?=\")").Match(otv).Value;
             string objektId = new Regex("(?<=\"objectId\":\").*?(?=\")").Match(otv).Value;
             string timestamp = new Regex("(?<=\"timestamp\":\").*?(?=\")").Match(otv).Value;
@@ -1577,7 +1587,7 @@ namespace NehouseLibrary
             return text;
         }
 
-        private void Internet()
+        public void Internet()
         {
             bool internet = false;
             do

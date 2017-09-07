@@ -1,0 +1,8 @@
+
+bin/*
+obj/*
+obj/Debug/NehouseLibrary.pdb
+obj/Debug/NehouseLibrary.dll
+bin/Debug/NehouseLibrary.dll
+obj/Debug/NehouseLibrary.pdb
+*.dll
