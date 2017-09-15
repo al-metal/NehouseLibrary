@@ -1270,7 +1270,12 @@ namespace NehouseLibrary
             string alt = new Regex("(?<=\"alt\":\").*?(?=\")").Match(otv).Value;
             string isvisibleonmain = new Regex("(?<=\"isVisibleOnMain\".).*?(?=,)").Match(otv).Value;
             string prioriti = new Regex("(?<=\"priority\":\").*?(?=\")").Match(otv).Value;
-            string avatarurl = new Regex("(?<=\"url\":\").*?(?=\")").Match(otv).Value;
+            string avatarurlString = new Regex("(?<=avatar).*?(?=alsoBuy)").Match(otv).Value;
+            string avatarurl = new Regex("(?<=url\":\").*?(?=\")").Match(avatarurlString).ToString();
+            if (avatarurl == "")
+            {
+                avatarurl = new Regex("(?<=src\":\").*?(?=\")").Match(avatarurlString).ToString();
+            }
             string filtersleft = new Regex("(?<=\"left\":).*?(?=,)").Match(otv).Value;
             string filterstop = new Regex("(?<=\"top\":).*?(?=,)").Match(otv).Value;
             string filtersright = new Regex("(?<=\"right\":).*?(?=,)").Match(otv).Value;
