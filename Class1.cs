@@ -482,7 +482,7 @@ namespace NehouseLibrary
                 urlProduct = urlProduct.Replace(".ru", ".nethouse.ru");
             }
             Internet();
-            otv = PostRequest(cookieBike18, urlProduct);
+            otv = getRequest(cookieBike18, urlProduct);
             String article = new Regex("(?<=Артикул:)[\\w\\W]*?(?=</div>)").Match(otv).Value.Trim();
             if (article.Length > 128 || article.Contains(" "))
             {
