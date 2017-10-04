@@ -70,6 +70,58 @@ namespace NehouseLibrary
         }
 
         /// <summary>
+        /// Вебзапрос возвращает страницу ответа в кодировке utf-8
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        public string getRequestEncodingUTF8(string url)
+        {
+            Internet();
+            try
+            {
+                var request = new HttpRequest();
+                request.UserAgent = HttpHelper.RandomChromeUserAgent();
+                request.CharacterSet = Encoding.GetEncoding("utf-8");
+                // Отправляем запрос.
+                HttpResponse response = request.Get(url);
+                // Принимаем тело сообщения в виде строки.
+                otv = response.ToText();
+            }
+            catch
+            {
+                otv = "err";
+            }
+
+            return otv;
+        }
+
+        /// <summary>
+        /// Вебзапрос возвращает страницу ответа в кодировке 1251
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        public string getRequestEncoding1251(string url)
+        {
+            Internet();
+            try
+            {
+                var request = new HttpRequest();
+                request.UserAgent = HttpHelper.RandomChromeUserAgent();
+                request.CharacterSet = Encoding.GetEncoding(1251);
+                // Отправляем запрос.
+                HttpResponse response = request.Get(url);
+                // Принимаем тело сообщения в виде строки.
+                otv = response.ToText();
+            }
+            catch
+            {
+                otv = "err";
+            }
+
+            return otv;
+        }
+
+        /// <summary>
         /// Веб запрос с подключением кукисов
         /// </summary>
         /// <param name="cookie"></param>
