@@ -16,6 +16,7 @@ namespace NehouseLibrary
     {
         string otv;
         int addCount = 0;
+        bool proxy = false;
 
         IPStatus status;
         Dictionary<string, string> ampersands = new Dictionary<string, string>();
@@ -54,7 +55,7 @@ namespace NehouseLibrary
             {
                 var request = new HttpRequest();
                 request.UserAgent = HttpHelper.RandomChromeUserAgent();
-                request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
+                
                 // Отправляем запрос.
                 HttpResponse response = request.Get(url);
                 // Принимаем тело сообщения в виде строки.
@@ -64,7 +65,7 @@ namespace NehouseLibrary
             {
                 otv = "err";
             }
-            
+
             return otv;
         }
 
@@ -81,7 +82,7 @@ namespace NehouseLibrary
             {
                 var request = new HttpRequest();
                 request.UserAgent = HttpHelper.RandomChromeUserAgent();
-                request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
+                
                 request.Cookies = cookie;
                 HttpResponse response = request.Get(url);
                 otv = response.ToText();
@@ -90,7 +91,7 @@ namespace NehouseLibrary
             {
                 otv = "err";
             }
-            
+
             return otv;
         }
 
@@ -122,7 +123,7 @@ namespace NehouseLibrary
             {
                 var request = new HttpRequest();
                 request.UserAgent = HttpHelper.RandomChromeUserAgent();
-                request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
+                
                 request.Cookies = cookie;
                 HttpResponse response = request.Post(url, "");
                 otv = response.ToText();
@@ -159,7 +160,7 @@ namespace NehouseLibrary
             CookieDictionary cookie = new CookieDictionary();
             var request = new HttpRequest();
             request.UserAgent = HttpHelper.RandomChromeUserAgent();
-            request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
+            
             request.Cookies = cookie;
             HttpResponse response = request.Post(url, "");
             otv = response.ToText();
@@ -191,7 +192,7 @@ namespace NehouseLibrary
             CookieDictionary cookie = new CookieDictionary();
             var request = new HttpRequest();
             request.UserAgent = HttpHelper.RandomChromeUserAgent();
-            request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
+                
             request.Cookies = cookie;
             HttpResponse response = request.Post(url, "login=" + login + "&password=" + password + "&quick_expire=0&submit=%D0%92%D0%BE%D0%B9%D1%82%D0%B8");
             otv = response.ToText();
@@ -224,7 +225,7 @@ namespace NehouseLibrary
             {
                 var request = new HttpRequest();
                 request.UserAgent = HttpHelper.RandomChromeUserAgent();
-                request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
+                
                 request.Cookies = cookie;
                 HttpResponse response = request.Post(url, requestStr);
                 otv = response.ToText();
@@ -308,7 +309,7 @@ namespace NehouseLibrary
 
             var request = new HttpRequest();
             request.UserAgent = HttpHelper.RandomChromeUserAgent();
-            request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
+            
             request.Cookies = cookie;
             request.ContentType = "multipart/form-data; boundary=---------------------------12709277337355";
             request["X-Requested-With"] = "XMLHttpRequest";
@@ -428,7 +429,7 @@ namespace NehouseLibrary
         {
             /*var request = new HttpRequest();
             request.UserAgent = HttpHelper.RandomChromeUserAgent();
-            request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
+            
             request.Cookies = cookie;
             request.ContentType = "application/x-www-form-urlencoded";
             request["X-Requested-With"] = "XMLHttpRequest";
@@ -531,7 +532,7 @@ namespace NehouseLibrary
             Internet();
             var request = new HttpRequest();
             request.UserAgent = HttpHelper.RandomChromeUserAgent();
-            request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
+            
             request.Cookies = cookieBike18;
             request.ContentType = "multipart/form-data; boundary=----WebKitFormBoundaryDxXeyjY3R0nRHgrP";
             request["X-Requested-With"] = "XMLHttpRequest";
@@ -571,7 +572,7 @@ namespace NehouseLibrary
             Internet();
             request = new HttpRequest();
             request.UserAgent = HttpHelper.RandomChromeUserAgent();
-            request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
+            
             request.Cookies = cookieBike18;
             request.ContentType = "application/x-www-form-urlencoded";
             response = request.Post("https://bike18.nethouse.ru/api/catalog/save-image", saveImg);
@@ -615,7 +616,7 @@ namespace NehouseLibrary
             Internet();
             var request = new HttpRequest();
             request.UserAgent = HttpHelper.RandomChromeUserAgent();
-            request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
+            
             request.Cookies = cookie;
             request.ContentType = "multipart/form-data; boundary=---------------------------12709277337355";
             request["X-Requested-With"] = "XMLHttpRequest";
@@ -653,7 +654,7 @@ namespace NehouseLibrary
             Internet();
             var request = new HttpRequest();
             request.UserAgent = HttpHelper.RandomChromeUserAgent();
-            request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
+            
             request.Cookies = cookie;
             request.ContentType = "multipart/form-data; boundary=---------------------------12709277337355";
             request["X-Requested-With"] = "XMLHttpRequest";
@@ -1016,7 +1017,7 @@ namespace NehouseLibrary
 
             var request = new HttpRequest();
             request.UserAgent = HttpHelper.RandomChromeUserAgent();
-            request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
+            
             request.Cookies = cookie;
             request.ContentType = "application/x-www-form-urlencoded";
             HttpResponse response = request.Post("https://bike18.nethouse.ru/api/catalog/deleteproduct", ms);
@@ -1051,7 +1052,7 @@ namespace NehouseLibrary
 
             var request = new HttpRequest();
             request.UserAgent = HttpHelper.RandomChromeUserAgent();
-            request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
+            
             request.Cookies = cookie;
             request.ContentType = "application/x-www-form-urlencoded";
             HttpResponse response = request.Post("https://bike18.nethouse.ru/api/catalog/deleteproduct", ms);
@@ -1119,7 +1120,7 @@ namespace NehouseLibrary
             }
             string prodName = new Regex("(?<=<h1>).*(?=</h1>)").Match(otv).Value;
             prodName = ReplaceAmpersandsChar(prodName);
-            
+
             string imgId = new Regex("(?<=<div id=\"avatar-).*(?=\")").Match(otv).Value;
             string desc = new Regex("(?<=<div class=\"product__desc show-for-large user-inner\">)[\\w\\W]*?(?=</div>)").Match(otv).Value;
             desc = ReplaceAmpersandsChar(desc);
@@ -1381,7 +1382,7 @@ namespace NehouseLibrary
 
             var request = new HttpRequest();
             request.UserAgent = HttpHelper.RandomChromeUserAgent();
-            request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
+            
             request.Cookies = cookie;
             request.ContentType = "application/x-www-form-urlencoded";
             request["X-Requested-With"] = "XMLHttpRequest";
@@ -1527,7 +1528,7 @@ namespace NehouseLibrary
 
             var request = new HttpRequest();
             request.UserAgent = HttpHelper.RandomChromeUserAgent();
-            request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
+            
             request.Cookies = cookie;
             request.ContentType = "application/x-www-form-urlencoded";
             request["X-Requested-With"] = "XMLHttpRequest";
