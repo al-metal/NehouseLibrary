@@ -1150,7 +1150,7 @@ namespace NehouseLibrary
             MatchCollection articlArray = new Regex("(?<=Артикул:)[\\w\\W]*?(?=</div>)").Matches(otv);
             for (int i = 0; articlArray.Count > i; i++)
             {
-                string str = articlArray[i].ToString().Trim();
+                string str = articlArray[i].ToString().Trim();  
                 if (str.Length > 128)
                 {
                     article = new Regex("(?<=Артикул:)[\\w\\W]*(?=</title>)").Match(otv).ToString().Trim();
@@ -1172,6 +1172,9 @@ namespace NehouseLibrary
             }
             string prodName = new Regex("(?<=<h1>).*(?=</h1>)").Match(otv).Value;
             prodName = ReplaceAmpersandsChar(prodName);
+
+            MatchCollection nameRazdels = new Regex("(?<=<div class=\"bread-crumbs__item bread-crumbs__text\">).*?(?=</div></a></div>)").Matches(otv);
+            string nameRazdel = nameRazdels[nameRazdels.Count - 1].ToString();
 
             string imgId = new Regex("(?<=<div id=\"avatar-).*(?=\")").Match(otv).Value;
             string desc = new Regex("(?<=<div class=\"product__desc show-for-large user-inner\">)[\\w\\W]*?(?=</div>)").Match(otv).Value;
@@ -1381,6 +1384,7 @@ namespace NehouseLibrary
             listTovar.Add(parametrsTovar);  //44
             listTovar.Add(strGroupe);       //45
             listTovar.Add(customGroup);     //46
+            listTovar.Add(nameRazdel);      //47
 
             return listTovar;
         }
