@@ -1172,6 +1172,7 @@ namespace NehouseLibrary
             }
             string prodName = new Regex("(?<=<h1>).*(?=</h1>)").Match(otv).Value;
             prodName = ReplaceAmpersandsChar(prodName);
+            prodName = prodName.Replace(';', '-');
 
             MatchCollection nameRazdels = new Regex("(?<=<div class=\"bread-crumbs__item bread-crumbs__text\">).*?(?=</div></a></div>)").Matches(otv);
             string nameRazdel = nameRazdels[nameRazdels.Count - 1].ToString();
