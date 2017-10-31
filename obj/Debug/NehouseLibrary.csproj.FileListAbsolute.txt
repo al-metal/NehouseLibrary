@@ -7,3 +7,10 @@ D:\GitHub\NehouseLibrary\NehouseLibrary\obj\Debug\NehouseLibrary.pdb
 D:\GitHub\NehouseLibrary\NehouseLibrary\bin\Debug\Newtonsoft.Json.dll
 D:\GitHub\NehouseLibrary\NehouseLibrary\bin\Debug\Newtonsoft.Json.xml
 D:\GitHub\NehouseLibrary\NehouseLibrary\obj\Debug\NehouseLibrary.csproj.CoreCompileInputs.cache
+D:\GitHub\NehouseLibrary\bin\Debug\NehouseLibrary.dll
+D:\GitHub\NehouseLibrary\bin\Debug\NehouseLibrary.pdb
+D:\GitHub\NehouseLibrary\bin\Debug\Newtonsoft.Json.dll
+D:\GitHub\NehouseLibrary\bin\Debug\Newtonsoft.Json.xml
+D:\GitHub\NehouseLibrary\obj\Debug\NehouseLibrary.csprojResolveAssemblyReference.cache
+D:\GitHub\NehouseLibrary\obj\Debug\NehouseLibrary.dll
+D:\GitHub\NehouseLibrary\obj\Debug\NehouseLibrary.pdb

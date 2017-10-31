@@ -1338,6 +1338,47 @@ namespace NehouseLibrary
             string filtersright = new Regex("(?<=\"right\":).*?(?=,)").Match(otv).Value;
             string filtersbottom = new Regex("(?<=\"bottom\":).*?(?=})").Match(otv).Value;
 
+             string images = "";
+            MatchCollection allImages = new Regex("(?<=:{\"id\":\").*?(?=format\\(png\\))").Matches(otv);
+            if (allImages.Count != 0)
+            {
+                foreach (Match img in allImages)
+                {
+                    string str = img.ToString();
+                    MatchCollection urlImg = new Regex("(?<=\"src\":\").*?.jpg").Matches(str);
+                    if(urlImg.Count == 0)
+                    {
+                        urlImg = new Regex("(?<=\"src\":\").*?.JPG").Matches(str);
+                    }
+                    foreach (Match img2 in urlImg)
+                    {
+                        string s = img2.ToString();
+                        s = s.Replace("\\/", "/").Replace("//", "");
+                        images = images + ";" + s;
+                    }
+
+                }
+            }
+            /*string allImages = new Regex("(?<=\"images\")[\\w\\W]*?(?=\"alsoBuy\")").Match(otv).ToString();
+            MatchCollection multimediaObj = new Regex("(?<={\"id\":)[\\w\\W]*?jpg\"},").Matches(otv);
+            if (multimediaObj.Count != 0)
+            {
+                for (int i = 0; multimediaObj.Count > i; i++)
+                {
+                    string strObj = multimediaObj[i].ToString();
+                    string urlImage = new Regex("(?<=\"url\":\").*?(?=\")").Match(otv).ToString();
+                    if (urlImage != "")
+                    {
+                        images += urlImage + ";";
+                    }
+                    else
+                    {
+
+                    }
+
+                }
+            }*/
+
             listTovar.Add(productId);       //0
             listTovar.Add(slug);            //1
             listTovar.Add(categoryId);      //2
@@ -1386,6 +1427,7 @@ namespace NehouseLibrary
             listTovar.Add(strGroupe);       //45
             listTovar.Add(customGroup);     //46
             listTovar.Add(nameRazdel);      //47
+            listTovar.Add(images);          //48
 
             return listTovar;
         }
