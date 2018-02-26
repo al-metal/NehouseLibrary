@@ -1620,6 +1620,21 @@ namespace NehouseLibrary
 
                     }
                 }
+                if (images.Contains('}') || images.Contains('{'))
+                    images = "";
+                if (images == "")
+                {
+                    allImages = new Regex("(?<=\"src\":\").*?(?=\")").Matches(otv);
+                    if (allImages.Count != 0)
+                    {
+                        foreach (Match imgUrl in allImages)
+                        {
+                            string str = imgUrl.ToString();
+                            str = str.Replace("\\/", "/").Replace("//", "");
+                            images = images + ";" + str;
+                        }
+                    }
+                }
                 /*string allImages = new Regex("(?<=\"images\")[\\w\\W]*?(?=\"alsoBuy\")").Match(otv).ToString();
                 MatchCollection multimediaObj = new Regex("(?<={\"id\":)[\\w\\W]*?jpg\"},").Matches(otv);
                 if (multimediaObj.Count != 0)
