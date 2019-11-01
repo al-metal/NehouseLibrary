@@ -8,7 +8,7 @@ using System.Net.NetworkInformation;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using xNet.Net;
+using xNet;
 
 namespace NehouseLibrary
 {
@@ -23,26 +23,6 @@ namespace NehouseLibrary
 
         #region WEB - запросы
 
-        ///// <summary>
-        ///// Метод возвращает ответ на запрос в кодировке 1251
-        ///// </summary>
-        ///// <param name="url"></param>
-        ///// <returns></returns>
-        //public string getRequestEncod(string url)
-        //{
-        //    otv = "";
-        //    HttpWebResponse res = null;
-        //    HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
-        //    req.Proxy = null;
-        //    req.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
-        //    req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:44.0) Gecko/20100101 Firefox/44.0";
-        //    res = (HttpWebResponse)req.GetResponse();
-        //    StreamReader ressr = new StreamReader(res.GetResponseStream(), Encoding.GetEncoding(1251));
-        //    otv = ressr.ReadToEnd();
-        //    res.Close();
-        //    return otv;
-        //}
-
         /// <summary>
         /// Вебзапрос возвращает страницу ответа
         /// </summary>
@@ -54,12 +34,10 @@ namespace NehouseLibrary
             try
             {
                 var request = new HttpRequest();
-                request.UserAgent = HttpHelper.RandomChromeUserAgent();
-
-                // Отправляем запрос.
+                request.UserAgent = Http.FirefoxUserAgent();
+                if (proxy) request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
                 HttpResponse response = request.Get(url);
-                // Принимаем тело сообщения в виде строки.
-                otv = response.ToText();
+                otv = response.ToString();
             }
             catch
             {
@@ -80,12 +58,37 @@ namespace NehouseLibrary
             try
             {
                 var request = new HttpRequest();
-                request.UserAgent = HttpHelper.RandomChromeUserAgent();
+                request.UserAgent = Http.FirefoxUserAgent();
                 request.CharacterSet = Encoding.GetEncoding("utf-8");
-                // Отправляем запрос.
+                if (proxy) request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
                 HttpResponse response = request.Get(url);
-                // Принимаем тело сообщения в виде строки.
-                otv = response.ToText();
+                otv = response.ToString();
+            }
+            catch
+            {
+                otv = "err";
+            }
+
+            return otv;
+        }
+
+        /// <summary>
+        /// Вебзапрос возвращает страницу ответа в кодировке utf-8
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        public string getRequestEncodingUTF8(CookieDictionary cookie, string url)
+        {
+            Internet();
+            try
+            {
+                var request = new HttpRequest();
+                request.UserAgent = Http.FirefoxUserAgent();
+                request.CharacterSet = Encoding.GetEncoding("utf-8");   
+                if (proxy) request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
+                request.Cookies = cookie;
+                HttpResponse response = request.Get(url);
+                otv = response.ToString();
             }
             catch
             {
@@ -106,12 +109,32 @@ namespace NehouseLibrary
             try
             {
                 var request = new HttpRequest();
-                request.UserAgent = HttpHelper.RandomChromeUserAgent();
+                request.UserAgent = Http.FirefoxUserAgent();
                 request.CharacterSet = Encoding.GetEncoding(1251);
-                // Отправляем запрос.
+                if (proxy) request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
                 HttpResponse response = request.Get(url);
-                // Принимаем тело сообщения в виде строки.
-                otv = response.ToText();
+                otv = response.ToString();
+            }
+            catch
+            {
+                otv = "err";
+            }
+
+            return otv;
+        }
+
+        public string getRequestEncoding1251(CookieDictionary cookie, string url)
+        {
+            Internet();
+            try
+            {
+                var request = new HttpRequest();
+                request.UserAgent = Http.FirefoxUserAgent();
+                request.CharacterSet = Encoding.GetEncoding(1251);
+                if (proxy) request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
+                request.Cookies = cookie;
+                HttpResponse response = request.Get(url);
+                otv = response.ToString();
             }
             catch
             {
@@ -133,11 +156,15 @@ namespace NehouseLibrary
             try
             {
                 var request = new HttpRequest();
-                request.UserAgent = HttpHelper.RandomChromeUserAgent();
-
+                request.UserAgent = Http.FirefoxUserAgent();
+                if (proxy) request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
                 request.Cookies = cookie;
+
+                request.AddHeader(HttpHeader.Accept, "application/json, text/plain, */*");
+                request.AddHeader(HttpHeader.AcceptLanguage, "ru-RU");
+
                 HttpResponse response = request.Get(url);
-                otv = response.ToText();
+                otv = response.ToString();
             }
             catch
             {
@@ -147,26 +174,48 @@ namespace NehouseLibrary
             return otv;
         }
 
-        //public string getRequest(CookieContainer cookie, string url, string stringQuery)
-        //{
-        //    otv = "";
-        //    HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create(url);
-        //    req.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8";
-        //    req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36";
-        //    req.Method = "POST";
-        //    req.ContentType = "application/x-www-form-urlencoded";
-        //    req.CookieContainer = cookie;
-        //    byte[] ms1 = Encoding.ASCII.GetBytes(stringQuery);
-        //    req.ContentLength = ms1.Length;
-        //    Stream stre1 = req.GetRequestStream();
-        //    stre1.Write(ms1, 0, ms1.Length);
-        //    stre1.Close();
-        //    HttpWebResponse resimg = (HttpWebResponse)req.GetResponse();
-        //    StreamReader ressrImg = new StreamReader(resimg.GetResponseStream());
-        //    otv = ressrImg.ReadToEnd();
-        //    resimg.Close();
-        //    return otv;
-        //}
+        public void loadAltTextImage(CookieDictionary cookie, string idImg, string altText)
+        {
+            Internet();
+            try
+            {
+                var request = new HttpRequest();
+                request.UserAgent = Http.FirefoxUserAgent();
+                if (proxy) request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
+                request.Cookies = cookie;
+
+                request.AddHeader(HttpHeader.Accept, "application/json, text/plain, */*");
+                byte[] ms = Encoding.GetEncoding("utf-8").GetBytes("id=" + idImg + "&alt=" + altText);
+                HttpResponse response = request.Post("https://bike18.nethouse.ru/api/images/savealt", ms, "application/x-www-form-urlencoded");
+
+                //HttpResponse response = request.Get(url);
+                otv = response.ToString();
+            }
+            catch
+            {
+                otv = "err";
+            }
+
+
+
+
+            //HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create("https://bike18.nethouse.ru/api/images/savealt");
+            //req.Accept = "application/json, text/plain, */*";
+            //req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36";
+            //req.Method = "POST";
+            //req.Proxy = null;
+            //req.ContentType = "application/x-www-form-urlencoded";
+            //req.CookieDictionary = cookie;
+            
+            //req.ContentLength = ms.Length;
+            //Stream stre = req.GetRequestStream();
+            //stre.Write(ms, 0, ms.Length);
+            //stre.Close();
+            //HttpWebResponse res1 = (HttpWebResponse)req.GetResponse();
+            //StreamReader ressr1 = new StreamReader(res1.GetResponseStream());
+            //res1.Close();
+            //ressr1.Close();
+        }
 
         public string PostRequest(CookieDictionary cookie, string url)
         {
@@ -174,31 +223,19 @@ namespace NehouseLibrary
             try
             {
                 var request = new HttpRequest();
-                request.UserAgent = HttpHelper.RandomChromeUserAgent();
+                request.UserAgent = Http.FirefoxUserAgent();
 
                 request.Cookies = cookie;
+                if (proxy) request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
+
                 HttpResponse response = request.Post(url, "");
-                otv = response.ToText();
+                otv = response.ToString();
             }
             catch
             {
                 otv = "err";
             }
             return otv;
-
-            //otv = "";
-            //HttpWebResponse res = null;
-            //HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create(url);
-            //req.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
-            //req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:44.0) Gecko/20100101 Firefox/44.0";
-            //req.Method = "POST";
-            //req.ContentType = "application/x-www-form-urlencoded";
-            //req.CookieContainer = cookie;
-            //res = (HttpWebResponse)req.GetResponse();
-            //StreamReader ressr = new StreamReader(res.GetResponseStream());
-            //otv = ressr.ReadToEnd();
-
-            //return otv;
         }
 
         /// <summary>
@@ -211,24 +248,12 @@ namespace NehouseLibrary
             Internet();
             CookieDictionary cookie = new CookieDictionary();
             var request = new HttpRequest();
-            request.UserAgent = HttpHelper.RandomChromeUserAgent();
-
+            request.UserAgent = Http.FirefoxUserAgent();
+            if (proxy) request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
             request.Cookies = cookie;
             HttpResponse response = request.Post(url, "");
-            otv = response.ToText();
+            otv = response.ToString();
             return cookie;
-
-            //CookieContainer cooc = new CookieContainer();
-            //HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create(url);
-            //req.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
-            //req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:44.0) Gecko/20100101 Firefox/44.0";
-            //req.Method = "POST";
-            //req.ContentType = "application/x-www-form-urlencoded";
-            //req.CookieContainer = cooc;
-            //Stream stre = req.GetRequestStream();
-            //stre.Close();
-            //HttpWebResponse res = (HttpWebResponse)req.GetResponse();
-            //return cooc;
         }
 
         /// <summary>
@@ -237,35 +262,46 @@ namespace NehouseLibrary
         /// <param name="login"></param>
         /// <param name="password"></param>
         /// <returns></returns>
-        public CookieDictionary CookieNethouse(string login, string password)
+        public CookieDictionary CookieNethouse(string login, string password, bool bbb)
         {
             Internet();
-            string url = "https://nethouse.ru/signin";
+            string url = "https://accounts.nethouse.ru/auth/realms/nethouse/account/";
             CookieDictionary cookie = new CookieDictionary();
             var request = new HttpRequest();
-            request.UserAgent = HttpHelper.RandomChromeUserAgent();
-
+            if (proxy) request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
+            request.UserAgent = Http.FirefoxUserAgent();
             request.Cookies = cookie;
-            HttpResponse response = request.Post(url, "login=" + login + "&password=" + password + "&quick_expire=0&submit=%D0%92%D0%BE%D0%B9%D1%82%D0%B8");
-            otv = response.ToText();
+
+            HttpResponse response1 = request.Get("https://nethouse.ru/");
+            cookie = request.Cookies;
+
+            HttpResponse response2 = request.Get("https://nethouse.ru/new-auth/signin?redirect_uri=/constructor/signin");
+            cookie = request.Cookies;
+
+            HttpResponse response3 = request.Get("https://accounts.nethouse.ru/auth/realms/nethouse/protocol/openid-connect/auth?client_id=nethouse-constructor&kc_idp_hint=&login_hint=&redirect_uri=https%3A%2F%2Fnethouse.ru%2Fnew-auth%2F%2Fhandle_redirect%2FeyJyZWRpcmVjdF91cmkiOiIvY29uc3RydWN0b3Ivc2lnbmluIiwiaW5faWZyYW1lIjpmYWxzZX0&response_type=code&scope=openid+profile+email&state=state");
+            cookie = request.Cookies;
+            otv = response3.ToString();
+            string sessionCode = new Regex("(?<=session_code=).*?(?=\")").Match(otv).ToString();
+            string execution = new Regex("(?<=execution=).*?(?=&)").Match(otv).ToString();
+            string client_id = new Regex("(?<=client_id=).*?(?=&)").Match(otv).ToString();
+            string tab_id = new Regex("(?<=tab_id=).*?(?=\")").Match(otv).ToString();
+
+            url = "https://accounts.nethouse.ru/auth/realms/nethouse/login-actions/authenticate?session_code="+ sessionCode+"&execution="+ execution+"&client_id="+ client_id+"&tab_id=" + tab_id;
+
+            var reqParams = new RequestParams();
+
+            reqParams["rememberMe"] = "On";
+            reqParams["username"] = login;
+            reqParams["password"] = password;
+            reqParams["login"] = "";
+
+            HttpResponse response = request.Post(url, reqParams);
+            cookie = request.Cookies;
+
+            HttpResponse res3 = request.Get("https://bike18.nethouse.ru/html/ru_RU/widgets/catalog/productEdit.html?v=845039680435609820410");
+            cookie = request.Cookies;
+            otv = response.ToString();
             return cookie;
-            /*
-            otv = "";
-            CookieDictionary cookie = new CookieDictionary();
-            HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create("https://nethouse.ru/signin");
-            req.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,*//**;q=0.8";
-            req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:44.0) Gecko/20100101 Firefox/44.0";
-            req.Method = "POST";
-            req.ContentType = "application/x-www-form-urlencoded";
-            req.CookieContainer = cookie;
-            byte[] ms = Encoding.ASCII.GetBytes("login=" + login + "&password=" + password + "&quick_expire=0&submit=%D0%92%D0%BE%D0%B9%D1%82%D0%B8");
-            req.ContentLength = ms.Length;
-            Stream stre = req.GetRequestStream();
-            stre.Write(ms, 0, ms.Length);
-            stre.Close();
-            HttpWebResponse res = (HttpWebResponse)req.GetResponse();
-            res.Close();
-            return cookie;*/
         }
 
         public string PostRequest(CookieDictionary cookie, string url, string requestStr)
@@ -276,36 +312,16 @@ namespace NehouseLibrary
             try
             {
                 var request = new HttpRequest();
-                request.UserAgent = HttpHelper.RandomChromeUserAgent();
-
+                request.UserAgent = Http.FirefoxUserAgent();
+                if (proxy) request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
                 request.Cookies = cookie;
                 HttpResponse response = request.Post(url, requestStr);
-                otv = response.ToText();
+                otv = response.ToString();
             }
             catch
             {
                 otv = "err";
             }
-
-            //HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
-            //req.Accept = "application/json, text/plain, */*";
-            //req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36";
-            //req.Method = "POST";
-            //req.ContentType = "application/x-www-form-urlencoded";
-            //req.CookieContainer = cookie;
-
-
-            //byte[] ms = Encoding.GetEncoding("utf-8").GetBytes(requestStr);
-            //req.ContentLength = ms.Length;
-            //Stream stre = req.GetRequestStream();
-            //stre.Write(ms, 0, ms.Length);
-            //stre.Close();
-            //HttpWebResponse res1 = (HttpWebResponse)req.GetResponse();
-            //StreamReader ressr1 = new StreamReader(res1.GetResponseStream());
-            //otv = ressr1.ReadToEnd();
-            //res1.Close();
-            //ressr1.Close();
-
             return otv;
         }
 
@@ -350,9 +366,12 @@ namespace NehouseLibrary
         {
             string epoch = (DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds.ToString().Replace(",", "");
 
+            otv = getRequest("https://bike18.nethouse.ru/api/export-import/get-data");
+            string token = new Regex("(?<=token=).*?(?=\")").Match(otv).ToString();
+
             byte[] csv = File.ReadAllBytes(nameFile);
-            byte[] end = Encoding.ASCII.GetBytes("\r\n-----------------------------12709277337355\r\nContent-Disposition: form-data; name=\"_catalog_file\"\r\n\r\n" + nameFile + "\r\n-----------------------------12709277337355--\r\n");
-            byte[] ms1 = Encoding.ASCII.GetBytes("-----------------------------12709277337355\r\nContent-Disposition: form-data; name=\"catalog_file\"; filename=\"" + nameFile + "\"\r\nContent-Type: text/csv\r\n\r\n");
+            byte[] end = Encoding.ASCII.GetBytes("\r\n-----------------------------12709277337355\r\nContent-Disposition: form-data; name=\"_file\"\r\n\r\n" + nameFile + "\r\n-----------------------------12709277337355--\r\n");
+            byte[] ms1 = Encoding.ASCII.GetBytes("-----------------------------12709277337355\r\nContent-Disposition: form-data; name=\"file\"; filename=\"" + nameFile + "\"\r\nContent-Type: application/vnd.ms-exce\r\n\r\n");
 
             byte[] base_byte = ms1.Concat(csv).ToArray();
             base_byte = base_byte.Concat(end).ToArray();
@@ -360,13 +379,14 @@ namespace NehouseLibrary
             Internet();
 
             var request = new HttpRequest();
-            request.UserAgent = HttpHelper.RandomChromeUserAgent();
+            request.UserAgent = Http.FirefoxUserAgent();
 
             request.Cookies = cookie;
-            request.ContentType = "multipart/form-data; boundary=---------------------------12709277337355";
+            //request.ContentType = "multipart/form-data; boundary=---------------------------12709277337355";
             request["X-Requested-With"] = "XMLHttpRequest";
-            HttpResponse response = request.Post("https://bike18.nethouse.ru/api/export-import/import-from-csv?fileapi" + epoch, base_byte);
-            otv = response.ToText();
+            //HttpResponse response = request.Post("https://bike18.nethouse.ru/api/export-import/import-from-csv?fileapi" + epoch, base_byte);
+            HttpResponse response = request.Post("https://bike18.nethouse.ru/api/v1/storage/upload/private/catalog_import?token=" + token, base_byte);
+            otv = response.ToString();
 
             return otv;
 
@@ -480,13 +500,13 @@ namespace NehouseLibrary
         private string ChekedLoading(CookieDictionary cookie, string login, string password)
         {
             /*var request = new HttpRequest();
-            request.UserAgent = HttpHelper.RandomChromeUserAgent();
+            request.UserAgent = Http.FirefoxUserAgent();
             
             request.Cookies = cookie;
             request.ContentType = "application/x-www-form-urlencoded";
             request["X-Requested-With"] = "XMLHttpRequest";
             HttpResponse response = request.Post("https://bike18.nethouse.ru/api/export-import/check-import", "");
-            otv = response.ToText();
+            otv = response.ToString();
 
             return otv;*/
             Internet();
@@ -583,13 +603,13 @@ namespace NehouseLibrary
 
             Internet();
             var request = new HttpRequest();
-            request.UserAgent = HttpHelper.RandomChromeUserAgent();
+            request.UserAgent = Http.FirefoxUserAgent();
 
             request.Cookies = cookieBike18;
-            request.ContentType = "multipart/form-data; boundary=----WebKitFormBoundaryDxXeyjY3R0nRHgrP";
+            //request.ContentType = "multipart/form-data; boundary=----WebKitFormBoundaryDxXeyjY3R0nRHgrP";
             request["X-Requested-With"] = "XMLHttpRequest";
             HttpResponse response = request.Post("https://bike18.nethouse.ru/putimg?fileapi" + epoch, base_byte);
-            otv = response.ToText();
+            otv = response.ToString();
 
 
 
@@ -623,12 +643,12 @@ namespace NehouseLibrary
 
             Internet();
             request = new HttpRequest();
-            request.UserAgent = HttpHelper.RandomChromeUserAgent();
+            request.UserAgent = Http.FirefoxUserAgent();
 
             request.Cookies = cookieBike18;
-            request.ContentType = "application/x-www-form-urlencoded";
+            //request.ContentType = "application/x-www-form-urlencoded";
             response = request.Post("https://bike18.nethouse.ru/api/catalog/save-image", saveImg);
-            otv = response.ToText();
+            otv = response.ToString();
 
 
 
@@ -716,16 +736,16 @@ namespace NehouseLibrary
 
             Internet();
             var request = new HttpRequest();
-            request.UserAgent = HttpHelper.RandomChromeUserAgent();
+            request.UserAgent = Http.FirefoxUserAgent();
 
             request.Cookies = cookieBike18;
-            request.ContentType = "multipart/form-data; boundary=----WebKitFormBoundaryDxXeyjY3R0nRHgrP";
+            //request.ContentType = "multipart/form-data; boundary=----WebKitFormBoundaryDxXeyjY3R0nRHgrP";
             request["X-Requested-With"] = "XMLHttpRequest";
             HttpResponse response = null;
             try
             {
                 response = request.Post(domen + "/api/v1/storage/upload/insecure/img?fileapi" + epoch, base_byte);
-                otv = response.ToText();
+                otv = response.ToString();
             }
             catch
             {
@@ -738,14 +758,14 @@ namespace NehouseLibrary
 
             Internet();
             request = new HttpRequest();
-            request.UserAgent = HttpHelper.RandomChromeUserAgent();
+            request.UserAgent = Http.FirefoxUserAgent();
 
             request.Cookies = cookieBike18;
-            request.ContentType = "application/json;charset=UTF-8";
+            //request.ContentType = "application/json;charset=UTF-8";
             try
             {
                 response = request.Post(domen + "/api/v1/images/generate-url", saveImg);
-                otv = response.ToText();
+                otv = response.ToString();
             }
             catch
             {
@@ -753,14 +773,14 @@ namespace NehouseLibrary
             }
             Internet();
             request = new HttpRequest();
-            request.UserAgent = HttpHelper.RandomChromeUserAgent();
+            request.UserAgent = Http.FirefoxUserAgent();
 
             request.Cookies = cookieBike18;
-            request.ContentType = "application/json;charset=UTF-8";
+            //request.ContentType = "application/json;charset=UTF-8";
             try
             {
                 response = request.Post(domen + "/api/v1/images/generate-url", saveImg);
-                otv = response.ToText();
+                otv = response.ToString();
             }
             catch
             {
@@ -772,14 +792,14 @@ namespace NehouseLibrary
 
             Internet();
             request = new HttpRequest();
-            request.UserAgent = HttpHelper.RandomChromeUserAgent();
+            request.UserAgent = Http.FirefoxUserAgent();
 
             request.Cookies = cookieBike18;
-            request.ContentType = "application/x-www-form-urlencoded";
+            //request.ContentType = "application/x-www-form-urlencoded";
             try
             {
                 response = request.Post(domen + "/api/catalog/save-image", saveImg);
-                otv = response.ToText();
+                otv = response.ToString();
             }
             catch
             {
@@ -850,16 +870,16 @@ namespace NehouseLibrary
 
             Internet();
             var request = new HttpRequest();
-            request.UserAgent = HttpHelper.RandomChromeUserAgent();
+            request.UserAgent = Http.FirefoxUserAgent();
 
             request.Cookies = cookieBike18;
-            request.ContentType = "multipart/form-data; boundary=----WebKitFormBoundaryDxXeyjY3R0nRHgrP";
+            //request.ContentType = "multipart/form-data; boundary=----WebKitFormBoundaryDxXeyjY3R0nRHgrP";
             request["X-Requested-With"] = "XMLHttpRequest";
             HttpResponse response = null;
             try
             {
                 response = request.Post(domen + "/api/v1/storage/upload/insecure/img?fileapi" + epoch, base_byte);
-                otv = response.ToText();
+                otv = response.ToString();
             }
             catch
             {
@@ -872,14 +892,14 @@ namespace NehouseLibrary
 
             Internet();
             request = new HttpRequest();
-            request.UserAgent = HttpHelper.RandomChromeUserAgent();
+            request.UserAgent = Http.FirefoxUserAgent();
 
             request.Cookies = cookieBike18;
-            request.ContentType = "application/json;charset=UTF-8";
+            //request.ContentType = "application/json;charset=UTF-8";
             try
             {
                 response = request.Post(domen + "/api/v1/images/generate-url", saveImg);
-                otv = response.ToText();
+                otv = response.ToString();
             }
             catch
             {
@@ -891,14 +911,14 @@ namespace NehouseLibrary
 
             Internet();
             request = new HttpRequest();
-            request.UserAgent = HttpHelper.RandomChromeUserAgent();
+            request.UserAgent = Http.FirefoxUserAgent();
 
             request.Cookies = cookieBike18;
-            request.ContentType = "application/x-www-form-urlencoded";
+            //request.ContentType = "application/x-www-form-urlencoded";
             try
             {
                 response = request.Post(domen + "/api/catalog/save-image", saveImg);
-                otv = response.ToText();
+                otv = response.ToString();
             }
             catch
             {
@@ -920,13 +940,13 @@ namespace NehouseLibrary
 
             Internet();
             var request = new HttpRequest();
-            request.UserAgent = HttpHelper.RandomChromeUserAgent();
+            request.UserAgent = Http.FirefoxUserAgent();
 
             request.Cookies = cookie;
-            request.ContentType = "multipart/form-data; boundary=---------------------------12709277337355";
+            //request.ContentType = "multipart/form-data; boundary=---------------------------12709277337355";
             request["X-Requested-With"] = "XMLHttpRequest";
             HttpResponse response = request.Post("https://bike18.nethouse.ru/putimg?fileapi" + epoch, base_byte);
-            otv = response.ToText();
+            otv = response.ToString();
 
             return otv;
 
@@ -958,13 +978,13 @@ namespace NehouseLibrary
             byte[] saveImg = Encoding.ASCII.GetBytes("url=" + urlSaveImg + "&id=0&type=4&objectId=" + prodId + "&imgCrop[x]=0&imgCrop[y]=0&imgCrop[width]=" + widthImg + "&imgCrop[height]=" + heigthImg + "&imageId=0&iObjectId=" + prodId + "&iImageType=4&replacePhoto=0");
             Internet();
             var request = new HttpRequest();
-            request.UserAgent = HttpHelper.RandomChromeUserAgent();
+            request.UserAgent = Http.FirefoxUserAgent();
 
             request.Cookies = cookie;
-            request.ContentType = "multipart/form-data; boundary=---------------------------12709277337355";
+            //request.ContentType = "multipart/form-data; boundary=---------------------------12709277337355";
             request["X-Requested-With"] = "XMLHttpRequest";
             HttpResponse response = request.Post("https://bike18.nethouse.ru/api/catalog/save-image", saveImg);
-            otv = response.ToText();
+            otv = response.ToString();
 
             return otv;
 
@@ -1321,12 +1341,12 @@ namespace NehouseLibrary
             Internet();
 
             var request = new HttpRequest();
-            request.UserAgent = HttpHelper.RandomChromeUserAgent();
+            request.UserAgent = Http.FirefoxUserAgent();
 
             request.Cookies = cookie;
-            request.ContentType = "application/x-www-form-urlencoded";
+            ////request.ContentType = "application/x-www-form-urlencoded";
             HttpResponse response = request.Post("https://bike18.nethouse.ru/api/catalog/deleteproduct", ms);
-            otv = response.ToText();
+            otv = response.ToString();
 
             //HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create("https://bike18.nethouse.ru/api/catalog/deleteproduct");
             //req.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
@@ -1358,12 +1378,12 @@ namespace NehouseLibrary
             Internet();
 
             var request = new HttpRequest();
-            request.UserAgent = HttpHelper.RandomChromeUserAgent();
+            request.UserAgent = Http.FirefoxUserAgent();
 
             request.Cookies = cookie;
-            request.ContentType = "application/x-www-form-urlencoded";
+            //request.ContentType = "application/x-www-form-urlencoded";
             HttpResponse response = request.Post("https://bike18.nethouse.ru/api/catalog/deleteproduct", ms);
-            otv = response.ToText();
+            otv = response.ToString();
 
             //HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create("https://bike18.nethouse.ru/api/catalog/deleteproduct");
             //req.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
@@ -1386,6 +1406,9 @@ namespace NehouseLibrary
         {
             otv = "";
 
+            //cookie.Add("nethouse-constructor-access-token", "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJyVzZKWm96ZlhXdk5la2JFZU1wWWpaSUVrU3hZckdEZlh2RnJnVVEyTndVIn0.eyJqdGkiOiI4NzFjNTU5Yi1hZTg0LTRkYTMtYmJjYy1iMTJkNmM2YzI0MDAiLCJleHAiOjE1NjkxNTU1OTcsIm5iZiI6MCwiaWF0IjoxNTY5MTU1Mjk3LCJpc3MiOiJodHRwczovL2FjY291bnRzLm5ldGhvdXNlLnJ1L2F1dGgvcmVhbG1zL25ldGhvdXNlIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6ImZmMmNlMGQ1LTExMmMtNDZkNC1iZTc2LTgzM2M3YWQ1NGVkZiIsInR5cCI6IkJlYXJlciIsImF6cCI6Im5ldGhvdXNlLWNvbnN0cnVjdG9yIiwiYXV0aF90aW1lIjoxNTY5MTQ4NzE4LCJzZXNzaW9uX3N0YXRlIjoiMTBlZTEyMmQtMmI2Yy00ODI1LTljNzAtNjIzOTk2ZjQ1NDcyIiwiYWNyIjoiMCIsInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJvcGVuaWQgZW1haWwgcHJvZmlsZSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJiaWtlMTgucnUiLCJsb2NhbGUiOiJydSIsImVtYWlsIjoibW90b0BiaWtlMTgucnUifQ.YjRURjRXrmjL4JRGsvRiqM6p-cRaDLBWqNdL72q4J8jbmuJqfqnnHU0XtP-MuFStgWkMbSvYkWDGUEJh74xz6IV6vExy_KP4Y8Usvx6k5wgSKqjFe9binBRMNFmEM-xs_9V0-Tgm-k8xrLYI5KB68ecNt_68tJtuMrF8nY8ZnXOi4pSHoRjHhdfYL1HN3IgCUNERfmpTnwkSUh4l1Zaf5RMSIvCz83K3Fb7R3AXNYzqewMpaC3812KOLABygByQqvQDK_8xT3amtyyZ-U1QEOOR6a6vkG5_gBcYT68NzxhwKwW58Nhw8JGpcTOj2Y8hdqj73kM5d0fHWSpRzV0nazg");
+            //cookie.Add("nethouse-constructor-refresh-token", "eyJhbGciOiJIUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJhYTU2Njc5MS04MjhjLTQwZDEtOTk1NS03Y2RmNjhjM2U3MDgifQ.eyJqdGkiOiJhNDY1ODViZC05ZTZkLTQwZTQtYjlkNy04ZWU4OTI3OWFiZWMiLCJleHAiOjE1NjkyNDE2OTcsIm5iZiI6MCwiaWF0IjoxNTY5MTU1Mjk3LCJpc3MiOiJodHRwczovL2FjY291bnRzLm5ldGhvdXNlLnJ1L2F1dGgvcmVhbG1zL25ldGhvdXNlIiwiYXVkIjoiaHR0cHM6Ly9hY2NvdW50cy5uZXRob3VzZS5ydS9hdXRoL3JlYWxtcy9uZXRob3VzZSIsInN1YiI6ImZmMmNlMGQ1LTExMmMtNDZkNC1iZTc2LTgzM2M3YWQ1NGVkZiIsInR5cCI6IlJlZnJlc2giLCJhenAiOiJuZXRob3VzZS1jb25zdHJ1Y3RvciIsImF1dGhfdGltZSI6MCwic2Vzc2lvbl9zdGF0ZSI6IjEwZWUxMjJkLTJiNmMtNDgyNS05YzcwLTYyMzk5NmY0NTQ3MiIsInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJvcGVuaWQgZW1haWwgcHJvZmlsZSJ9.lJYxWEuzH8wZkh_MTL6JHXnDIHa-s44Egwfdn0miQfk");
+
             string domen = "";
             if (urlTovar.Contains("motogarag"))
                 domen = "https://motogarag.nethouse.ru";
@@ -1405,6 +1428,13 @@ namespace NehouseLibrary
                 {
                     return listTovar = null;
                 }
+
+                string id = new Regex("(?<=data-html-version=\").*(?=\")").Match(otv).ToString();
+                //String  otv222 = getRequest(cookie, "https://bike18.nethouse.ru/html/ru_RU/widgets/catalog/productEdit.html?v=" + id);
+                //if (otv222 == "err")
+                //{
+                //    return listTovar = null;
+                //}
 
                 string productId = new Regex("(?<=data-product-id=\").*?(?=\">)").Match(otv).ToString();
                 if (productId == "")
@@ -1534,7 +1564,7 @@ namespace NehouseLibrary
                 MatchCollection stringAtributes = new Regex("(?<=\":{\").*?(?=])").Matches(atributes);
                 for (int i = 0; stringAtributes.Count > i; i++)
                 {
-                    string id = new Regex("(?<=primaryKey\":).*?(?=,\")").Match(stringAtributes[i].ToString()).Value;
+                    string mid = new Regex("(?<=primaryKey\":).*?(?=,\")").Match(stringAtributes[i].ToString()).Value;
                     string valueId = new Regex("(?<=\"valueId\":\").*?(?=\")").Match(stringAtributes[i].ToString()).Value;
                     string valueText = new Regex("(?<=valueText\":).*?(?=})").Match(stringAtributes[i].ToString()).Value;
                     string text = new Regex("(?<=\"text\":).*?(?=})").Match(stringAtributes[i].ToString()).Value;
@@ -1542,14 +1572,14 @@ namespace NehouseLibrary
 
                     if (valueId != "")
                     {
-                        atribut = atribut + "&attributes[" + i + "][primaryKey]=" + id + "&attributes[" + i + "][attributeId]=" + id + "&attributes[" + i + "][values][0][empty]=0&attributes[" + i + "][values][0][valueId]=" + valueId;
+                        atribut = atribut + "&attributes[" + i + "][primaryKey]=" + mid + "&attributes[" + i + "][attributeId]=" + mid + "&attributes[" + i + "][values][0][empty]=0&attributes[" + i + "][values][0][valueId]=" + valueId;
                     }
                     else
                     {
                         if (text != "")
-                            atribut = atribut + "&attributes[" + i + "][primaryKey]=" + id + "&attributes[" + i + "][attributeId]=" + id + "&attributes[" + i + "][values][0][empty]=0&attributes[" + i + "][values][0][text]=" + text;
+                            atribut = atribut + "&attributes[" + i + "][primaryKey]=" + mid + "&attributes[" + i + "][attributeId]=" + mid + "&attributes[" + i + "][values][0][empty]=0&attributes[" + i + "][values][0][text]=" + text;
                         if (checkBox != "")
-                            atribut = atribut + "&attributes[" + i + "][primaryKey]=" + id + "&attributes[" + i + "][attributeId]=" + id + "&attributes[" + i + "][values][0][empty]=0&attributes[" + i + "][values][0][checkbox]=" + checkBox;
+                            atribut = atribut + "&attributes[" + i + "][primaryKey]=" + mid + "&attributes[" + i + "][attributeId]=" + mid + "&attributes[" + i + "][values][0][empty]=0&attributes[" + i + "][values][0][checkbox]=" + checkBox;
                     }
                 }
                 atribut = atribut.Replace("true", "1").Replace("\"", "");
@@ -1744,6 +1774,28 @@ namespace NehouseLibrary
             return price;
         }
 
+        public string SaveTovar(CookieDictionary cookie, string requestString)
+        {
+            otv = "";
+           
+            byte[] ms = Encoding.GetEncoding("utf-8").GetBytes(requestString);
+
+            Internet();
+
+            var request = new HttpRequest();
+            //req.Accept = "application/json, text/plain, */*";
+            request.UserAgent = Http.FirefoxUserAgent();
+            if (proxy) request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
+            request.Cookies = cookie;
+            //request["Accept"] = ["application/json, text/plain, */*"];
+            request["X-Requested-With"] = "XMLHttpRequest";
+
+            HttpResponse response = request.Post("https://bike18.nethouse.ru/api/catalog/saveproduct", ms, "application/x-www-form-urlencoded");
+            otv = response.ToString();
+
+            return otv;
+        }
+
         public string SaveTovar(CookieDictionary cookie, List<string> getProduct)
         {
             otv = "";
@@ -1753,7 +1805,40 @@ namespace NehouseLibrary
             string descFull = getProduct[8].ToString();
 
             getProduct[8] = descFull;
-            string requestStr = "id=" + getProduct[0] + "&slug=" + getProduct[1] + "&categoryId=" + getProduct[2] + "&productCustomGroup=" + getProduct[41] + "&productGroup=" + getProduct[3] + "&name=" + getProduct[4] + "&serial=" + getProduct[5] + "&serialByUser=" + getProduct[6] + "&desc=" + getProduct[7] + "&descFull=" + getProduct[8] + "&cost=" + getProduct[9] + "&discountCost=" + getProduct[10] + "&seoMetaDesc=" + getProduct[11] + "&seoMetaKeywords=" + getProduct[12] + "&seoTitle=" + getProduct[13] + "&haveDetail=" + getProduct[14] + "&canMakeOrder=" + getProduct[15] + "&balance=" + getProduct[43] + "&showOnMain=" + getProduct[16] + "&isVisible=1&hasSale=" + hasSale + getProduct[44] + "&customDays=" + getProduct[37] + "&isCustom=" + getProduct[38] + getProduct[39] + getProduct[40] + getProduct[42] + "&alsoBuyLabel=%D0%9F%D0%BE%D1%85%D0%BE%D0%B6%D0%B8%D0%B5%20%D1%82%D0%BE%D0%B2%D0%B0%D1%80%D1%8B%20%D0%B2%20%D0%BD%D0%B0%D1%88%D0%B5%D0%BC%20%D0%BC%D0%B0%D0%B3%D0%B0%D0%B7%D0%B8%D0%BD%D0%B5";
+            //string requestStr = "id=" + getProduct[0] + "&slug=" + getProduct[1] + "&categoryId=" + getProduct[2] + "&productCustomGroup=" + 
+            //    getProduct[41] + "&productGroup=" + getProduct[3] + "&name=" + WebUtility.UrlEncode(getProduct[4]) + "&serial=" + getProduct[5] + "&serialByUser=" + 
+            //    getProduct[6] + "&desc=" + WebUtility.UrlEncode(getProduct[7]) + "&descFull=" + WebUtility.UrlEncode(getProduct[8]) + "&cost=" + getProduct[9] + "&discountCost=" + 
+            //    getProduct[10] + "&seoMetaDesc=" + WebUtility.UrlEncode(getProduct[11]) + "&seoMetaKeywords=" + WebUtility.UrlEncode(getProduct[12]) + 
+            //    "&seoTitle=" + WebUtility.UrlEncode(getProduct[13]) + "&haveDetail=" + 
+            //    getProduct[14] + "&canMakeOrder=" + getProduct[15] + "&balance=" + getProduct[43] + "&showOnMain=" + getProduct[16] + "&isVisible=1&hasSale=" + 
+            //    hasSale + getProduct[44] + "&customDays=" + getProduct[37] + "&isCustom=" + getProduct[38] + getProduct[39] + getProduct[40] + 
+            //    getProduct[42] + "&alsoBuyLabel=%D0%9F%D0%BE%D1%85%D0%BE%D0%B6%D0%B8%D0%B5%20%D1%82%D0%BE%D0%B2%D0%B0%D1%80%D1%8B%20%D0%B2%20%D0%BD%D0%B0%D1%88%D0%B5%D0%BC%20%D0%BC%D0%B0%D0%B3%D0%B0%D0%B7%D0%B8%D0%BD%D0%B5";
+
+            string requestStr = "id=" + getProduct[0] +
+                "&slug=" + getProduct[1] +
+                "&categoryId=" + getProduct[2] +
+                "&productCustomGroup=" + getProduct[41] +
+                "&productGroup=" + getProduct[3] +
+                "&name=" + WebUtility.UrlEncode(getProduct[4]) +
+                "&serial=" + getProduct[5] +
+                "&serialByUser=" + getProduct[6] +
+                "&desc=" + WebUtility.UrlEncode(getProduct[7]) +
+                "&descFull==" + WebUtility.UrlEncode(getProduct[8]) +
+                "&cost=" + getProduct[9] +
+                "&discountCost=" + getProduct[10] +
+                "&seoMetaDesc=" + WebUtility.UrlEncode(getProduct[11]) +
+                "&seoMetaKeywords=" + WebUtility.UrlEncode(getProduct[12]) +
+                "&seoTitle=" + WebUtility.UrlEncode(getProduct[13]) +
+                "&haveDetail=" + getProduct[14] +
+                "&canMakeOrder=" + getProduct[15] +
+                "&balance=" + getProduct[43] +
+                "&showOnMain=" + getProduct[16] +
+                "&isVisible=1" +
+                "&hasSale=" + getProduct[42] +
+                "&customDays=" + getProduct[37] +
+                "&isCustom=" + getProduct[38] +
+                "&alsoBuyLabel=%D0%9F%D0%BE%D1%85%D0%BE%D0%B6%D0%B8%D0%B5%20%D1%82%D0%BE%D0%B2%D0%B0%D1%80%D1%8B%20%D0%B2%20%D0%BD%D0%B0%D1%88%D0%B5%D0%BC%20%D0%BC%D0%B0%D0%B3%D0%B0%D0%B7%D0%B8%D0%BD%D0%B5";
+            //requestStr = requestStr.Replace("%2B", "%20");
             requestStr = requestStr.Replace("false", "0").Replace("true", "1").Replace("+", "%2B");
 
             byte[] ms = Encoding.GetEncoding("utf-8").GetBytes(requestStr);
@@ -1763,50 +1848,15 @@ namespace NehouseLibrary
             Internet();
 
             var request = new HttpRequest();
-            request.UserAgent = HttpHelper.RandomChromeUserAgent();
-
+            request.UserAgent = Http.FirefoxUserAgent();
+            if (proxy) request.Proxy = HttpProxyClient.Parse("127.0.0.1:8888");
             request.Cookies = cookie;
-            request.ContentType = "application/x-www-form-urlencoded";
             request["X-Requested-With"] = "XMLHttpRequest";
-            HttpResponse response = request.Post("https://bike18.nethouse.ru/api/catalog/saveproduct", ms);
-            otv = response.ToText();
+
+            HttpResponse response = request.Post("https://bike18.nethouse.ru/api/catalog/saveproduct", ms, "application/x-www-form-urlencoded");
+            otv = response.ToString();
 
             return otv;
-
-
-
-
-
-
-
-            ////string otv = "";
-            //HttpWebRequest req = (HttpWebRequest)WebRequest.Create("https://bike18.nethouse.ru/api/catalog/saveproduct");
-            //req.Accept = "application/json, text/plain, */*";
-            //req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36";
-            //req.Method = "POST";
-            //req.ContentType = "application/x-www-form-urlencoded";
-            //req.CookieContainer = cookie;
-            //string hasSale = "0";
-            //if (getProduct[10] != "")
-            //    hasSale = "1";
-            //string descFull = getProduct[8].ToString();
-
-            //getProduct[8] = descFull;
-            //string request = "id=" + getProduct[0] + "&slug=" + getProduct[1] + "&categoryId=" + getProduct[2] + "&productCustomGroup=" + getProduct[41] + "&productGroup=" + getProduct[3] + "&name=" + getProduct[4] + "&serial=" + getProduct[5] + "&serialByUser=" + getProduct[6] + "&desc=" + getProduct[7] + "&descFull=" + getProduct[8] + "&cost=" + getProduct[9] + "&discountCost=" + getProduct[10] + "&seoMetaDesc=" + getProduct[11] + "&seoMetaKeywords=" + getProduct[12] + "&seoTitle=" + getProduct[13] + "&haveDetail=" + getProduct[14] + "&canMakeOrder=" + getProduct[15] + "&balance=" + getProduct[43] + "&showOnMain=" + getProduct[16] + "&isVisible=1&hasSale=" + hasSale + getProduct[44] + "&customDays=" + getProduct[37] + "&isCustom=" + getProduct[38] + getProduct[39] + getProduct[40] + getProduct[42] + "&alsoBuyLabel=%D0%9F%D0%BE%D1%85%D0%BE%D0%B6%D0%B8%D0%B5%20%D1%82%D0%BE%D0%B2%D0%B0%D1%80%D1%8B%20%D0%B2%20%D0%BD%D0%B0%D1%88%D0%B5%D0%BC%20%D0%BC%D0%B0%D0%B3%D0%B0%D0%B7%D0%B8%D0%BD%D0%B5";
-            //request = request.Replace("false", "0").Replace("true", "1").Replace("+", "%2B");
-
-            //byte[] ms = Encoding.GetEncoding("utf-8").GetBytes(request);
-            //req.ContentLength = ms.Length;
-            //Stream stre = req.GetRequestStream();
-            //stre.Write(ms, 0, ms.Length);
-            //stre.Close();
-            //HttpWebResponse res1 = (HttpWebResponse)req.GetResponse();
-            //StreamReader ressr1 = new StreamReader(res1.GetResponseStream());
-            //otv = ressr1.ReadToEnd();
-            //res1.Close();
-            //ressr1.Close();
-
-            //return otv;
         }
 
         public string SaveTovarRT(CookieDictionary cookie, List<string> getProduct)
@@ -1828,13 +1878,13 @@ namespace NehouseLibrary
             Internet();
 
             var request = new HttpRequest();
-            request.UserAgent = HttpHelper.RandomChromeUserAgent();
+            request.UserAgent = Http.FirefoxUserAgent();
 
             request.Cookies = cookie;
-            request.ContentType = "application/x-www-form-urlencoded";
+            //request.ContentType = "application/x-www-form-urlencoded";
             request["X-Requested-With"] = "XMLHttpRequest";
             HttpResponse response = request.Post("https://motogarag.nethouse.ru/api/catalog/saveproduct", ms);
-            otv = response.ToText();
+            otv = response.ToString();
 
             return otv;
 
@@ -1974,13 +2024,13 @@ namespace NehouseLibrary
             Internet();
 
             var request = new HttpRequest();
-            request.UserAgent = HttpHelper.RandomChromeUserAgent();
+            request.UserAgent = Http.FirefoxUserAgent();
 
             request.Cookies = cookie;
-            request.ContentType = "application/x-www-form-urlencoded";
+            //request.ContentType = "application/x-www-form-urlencoded";
             request["X-Requested-With"] = "XMLHttpRequest";
             HttpResponse response = request.Post("https://bike18.nethouse.ru/redirect/savelink", saveImg);
-            otv = response.ToText();
+            otv = response.ToString();
 
             return otv;
 
